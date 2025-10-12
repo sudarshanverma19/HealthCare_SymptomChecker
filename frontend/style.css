@@ -1,0 +1,39 @@
+/* Custom styles to complement Tailwind CSS */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom animation for loading state */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Custom gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Hidden utility class for backward compatibility */
+.hidden {
+  display: none;
+}
+
+/* Ensure focus styles are accessible */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid #0ea5a4;
+  outline-offset: 2px;
+}
+
+.history-item{padding:8px;border-bottom:1px solid #e6eef2;margin-bottom:8px}
+.history-item .symptoms{color:var(--muted);margin-top:6px}
+.chip{display:inline-block;background:#eef6f6;color:#065a59;padding:4px 8px;border-radius:999px;margin-top:6px;margin-right:6px;font-size:0.85rem}
