@@ -2,6 +2,9 @@
 
 A production-ready, containerized healthcare symptom checker web application powered by Google's Gemini AI. This application provides a professional medical consultation simulation with intelligent follow-up questions and educational assessments.
 
+
+DEMO VIDEO LINK : [Link Drive]https://drive.google.com/file/d/12yMCvEqdCIuj8nwo15KmflgifJ6R182R/view?usp=sharing
+
 ## ✨ Features
 
 - **🩺 Interactive Medical Consultation**: Multi-step consultation process mirroring real doctor-patient interactions
