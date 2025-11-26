@@ -2,6 +2,9 @@
 
 A simple AI-powered symptom checker built with FastAPI and vanilla JavaScript. No Docker required!
 
+
+DEMO VIDEO LINK : [Link Drive]https://drive.google.com/file/d/12yMCvEqdCIuj8nwo15KmflgifJ6R182R/view?usp=sharing
+
 ## ✨ Features
 
 - 🤖 AI-powered symptom analysis using Google Gemini
