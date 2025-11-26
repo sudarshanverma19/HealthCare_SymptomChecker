@@ -68,7 +68,7 @@ startBtn.addEventListener('click', async () => {
     showLoading(true);
     
     try {
-        const response = await fetch('http://127.0.0.1:8000/analyze_symptoms', {
+        const response = await fetch('https://healthcare-symptomchecker.onrender.com/analyze_symptoms', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -197,7 +197,7 @@ submitAnswersBtn.addEventListener('click', async () => {
     showLoading(true);
     
     try {
-        const response = await fetch('http://127.0.0.1:8000/analyze_symptoms', {
+        const response = await fetch('https://healthcare-symptomchecker.onrender.com/analyze_symptoms', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -373,7 +373,7 @@ clearBtn.addEventListener('click', () => {
 // Load consultation history
 async function loadHistory() {
     try {
-        const response = await fetch('http://127.0.0.1:8000/history');
+        const response = await fetch('https://healthcare-symptomchecker.onrender.com/history');
         const rawText = await response.text();
         console.log('History response:', response.status, rawText);
         
