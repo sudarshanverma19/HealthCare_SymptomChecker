@@ -1,7 +1,5 @@
-// API Configuration - uses same host but port 8000 for backend
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://127.0.0.1:8000'  // Local development
-    : `http://${window.location.hostname}:8000`;    // Production - same host, port 8000
+// API Configuration - Simple local development setup
+const API_BASE_URL = 'http://localhost:8000';
 
 console.log('API Base URL:', API_BASE_URL);
 

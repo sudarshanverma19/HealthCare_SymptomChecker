@@ -15,7 +15,9 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-load_dotenv()
+# Load environment variables from .env file in the same directory as this script
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path=env_path)
 
 # Initialize rate limiter
 limiter = Limiter(key_func=get_remote_address)
@@ -32,7 +34,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-GEN_API_KEY = os.getenv("GEN_API_KEY")
+# Load API key with multiple fallback methods
+GEN_API_KEY = os.getenv("GEN_API_KEY") or os.getenv("GEMINI_API_KEY")
 DB_PATH = os.path.join(os.path.dirname(__file__), "data.db")
 
 
@@ -60,7 +63,7 @@ class HistoryItem(BaseModel):
     created_at: str
 
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
 
 def init_db() -> sqlite3.Connection:
@@ -235,6 +238,12 @@ def save_query_sync(symptoms: str, severity: str, conditions: List[str], recomme
     return cur.lastrowid
 
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Docker and monitoring"""
+    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+
+
 @app.post("/analyze_symptoms", response_model=AnalysisResponse)
 @limiter.limit("10/minute")
 async def analyze_symptoms(request: Request, req: SymptomsRequest):
@@ -364,51 +373,54 @@ async def clear_history():
     result = await run_in_threadpool(_clear)
     return result
 
-@app.get("/history", response_model=List[HistoryItem])
+@app.get("/history")
 async def get_history(limit: int = 20):
     def _get():
-        cur = db_conn.cursor()
-        cur.execute("SELECT id, symptoms, consultation_type, questions, assessment, conversation_id, created_at FROM consultations ORDER BY id DESC LIMIT ?", (limit,))
-        rows = cur.fetchall()
-        items = []
-        for r in rows:
-            questions = []
-            assessment = {}
-            try:
-                questions = json.loads(r[3]) if r[3] else []
-            except Exception:
+        try:
+            cur = db_conn.cursor()
+            cur.execute("SELECT id, symptoms, consultation_type, questions, assessment, conversation_id, created_at FROM consultations ORDER BY id DESC LIMIT ?", (limit,))
+            rows = cur.fetchall()
+            items = []
+            for r in rows:
                 questions = []
-            try:
-                assessment = json.loads(r[4]) if r[4] else {}
-            except Exception:
                 assessment = {}
-            items.append(
-                {
-                    "id": r[0],
-                    "symptoms": r[1],
-                    "consultation_type": r[2] or "consultation",
-                    "questions": questions,
-                    "assessment": assessment,
-                    "conversation_id": r[5] or "",
-                    "created_at": r[6],
-                }
-            )
-        return items
+                try:
+                    if r[3]:  # questions field
+                        parsed_questions = json.loads(r[3])
+                        if isinstance(parsed_questions, list):
+                            questions = parsed_questions
+                        else:
+                            questions = []
+                except Exception as e:
+                    print(f"Error parsing questions: {e}")
+                    questions = []
+                
+                try:
+                    if r[4]:  # assessment field
+                        parsed_assessment = json.loads(r[4])
+                        if isinstance(parsed_assessment, dict):
+                            assessment = parsed_assessment
+                        else:
+                            assessment = {}
+                except Exception as e:
+                    print(f"Error parsing assessment: {e}")
+                    assessment = {}
+                
+                items.append(
+                    {
+                        "id": r[0],
+                        "symptoms": r[1] or "",
+                        "consultation_type": r[2] or "consultation",
+                        "questions": questions,
+                        "assessment": assessment,
+                        "conversation_id": r[5] or "",
+                        "created_at": r[6] or "",
+                    }
+                )
+            return items
+        except Exception as e:
+            print(f"Database error in history: {e}")
+            return {"error": str(e)}
 
     items = await run_in_threadpool(_get)
     return items
-
-
-@app.delete("/clear-history")
-async def clear_history():
-    """Clear all consultation history from the database"""
-    def _clear():
-        cur = db_conn.cursor()
-        # Clear both tables to start fresh
-        cur.execute("DELETE FROM consultations")
-        cur.execute("DELETE FROM queries")
-        db_conn.commit()
-        return {"message": "All consultation history cleared successfully"}
-    
-    result = await run_in_threadpool(_clear)
-    return result

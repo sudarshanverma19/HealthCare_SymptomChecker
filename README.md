@@ -1,178 +1,112 @@
-# 🏥 Healthcare Symptom Checker (Educational)
+# 🏥 Healthcare Symptom Checker
 
-A production-ready, containerized healthcare symptom checker web application powered by Google's Gemini AI. This application provides a professional medical consultation simulation with intelligent follow-up questions and educational assessments.
+A simple AI-powered symptom checker built with FastAPI and vanilla JavaScript. No Docker required!
 
 ## ✨ Features
 
-- **🩺 Interactive Medical Consultation**: Multi-step consultation process mirroring real doctor-patient interactions
-- **🤖 AI-Powered Analysis**: Google Gemini AI for intelligent symptom analysis and follow-up questions  
-- **📚 Educational Focus**: Differential diagnosis with likelihood ratings and medical reasoning
-- **📋 Consultation History**: Comprehensive tracking and display of previous consultations
-- **🛡️ Rate Limiting**: Built-in API protection for responsible usage
-- **🎨 Professional UI**: Modern, responsive design using Tailwind CSS
-- **⚠️ Safety Features**: Red flag symptoms identification and care guidance
-- **🐳 Docker Ready**: Fully containerized for easy deployment
-- **☁️ AWS Compatible**: Optimized for AWS EC2 free tier deployment
+- 🤖 AI-powered symptom analysis using Google Gemini
+- 💬 Interactive consultation with follow-up questions  
+- 📊 Medical condition assessment with likelihood ratings
+- 📝 Consultation history tracking
+- ⚠️ Red flag warnings for urgent care
+- 🎨 Clean, responsive web interface
 
-## 🏗️ Technology Stack
+## 🚀 Quick Start
 
-### Backend
-- **FastAPI**: High-performance Python web framework
-- **Google Gemini AI**: Advanced AI model for medical reasoning  
-- **SQLite**: Lightweight, persistent database
-- **SlowAPI**: Rate limiting middleware
-- **Docker**: Containerized deployment
+### 1. Prerequisites
 
-### Frontend  
-- **HTML5 + Tailwind CSS**: Modern, responsive UI
-- **Vanilla JavaScript**: Clean, dependency-free logic
-- **Nginx**: High-performance web server (production)
-- **Docker**: Containerized static file serving
+- Python 3.8+
+- Google Gemini API key ([Get one here](https://makersuite.google.com/app/apikey))
 
-## 🚀 Quick Start (Docker)
+### 2. Setup
 
-### Prerequisites
-- Docker & Docker Compose
-- Google Gemini AI API key
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/sudarshanverma19/HealthCare_SymptomChecker.git
+   cd HealthCare_SymptomChecker
+   ```
 
-### One-Command Setup
-```bash
-# Clone repository
-git clone <your-repository-url>
-cd healthcare-symptom-checker
+2. **Install Python dependencies**
+   ```bash
+   pip install -r backend/requirements.txt
+   ```
 
-# Set up environment
-cp .env.example .env
-# Edit .env with your Gemini API key
+3. **Configure API key**
+   
+   Create `backend/.env` file:
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
 
-# Start application
-docker-compose up -d --build
+### 3. Run the Application
+
+**Option A: Using batch scripts (Windows)**
+1. Double-click `start_backend.bat` to start the API server
+2. Double-click `start_frontend.bat` to start the web interface
+
+**Option B: Manual startup**
+1. Start backend: `python run_backend.py`
+2. Start frontend: `python -m http.server 8080`
+3. Open: http://localhost:8080
+
+## 🌐 Usage
+
+1. **Open** http://localhost:8080 in your browser
+2. **Describe** your symptoms in the text area
+3. **Click** "Start Medical Consultation"
+4. **Answer** follow-up questions if prompted
+5. **Review** AI assessment and recommendations
+
+## 📁 Project Structure
+
+```
+healthcare-symptom-checker/
+├── backend/                 # FastAPI backend
+│   ├── main.py             # Main API application
+│   ├── requirements.txt    # Python dependencies
+│   └── .env               # API keys (create this!)
+├── index.html             # Frontend web page
+├── script.js              # Frontend JavaScript
+├── style.css              # Frontend styling
+├── run_backend.py         # Backend startup script
+├── start_backend.bat      # Windows backend launcher
+└── start_frontend.bat     # Windows frontend launcher
 ```
 
-**Access your application:**
-- 🌐 Frontend: http://localhost
-- 🔌 Backend API: http://localhost:8000
+## 🛠️ API Endpoints
 
-## 🛠️ Development Setup
+- `GET /health` - Health check
+- `POST /analyze_symptoms` - Symptom analysis
+- `GET /history` - Consultation history
+- `GET /docs` - Interactive API documentation
 
-### Local Development
-```bash
-# Backend setup
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: .\venv\Scripts\activate
-pip install -r requirements.txt
+## ⚠️ Important Notes
 
-# Configure environment  
-cp .env.example .env
-# Add your Gemini API key to .env
+- **Not for medical diagnosis** - This is an educational tool only
+- **Always consult professionals** for medical advice
+- **Secure your API key** - Don't commit .env files
+- **Local development only** - Additional security needed for production
 
-# Run backend
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
+## 🔧 Troubleshooting
 
-# Frontend setup (separate terminal)
-cd frontend
-python -m http.server 8080
-```
+**Backend won't start?**
+- Check if Python 3.8+ is installed
+- Verify your GEMINI_API_KEY in backend/.env
+- Install dependencies: `pip install -r backend/requirements.txt`
 
-**Development URLs:**
-- Frontend: http://localhost:8080
-- Backend: http://localhost:8000
+**Frontend can't connect?**
+- Make sure backend is running on port 8000
+- Check if http://localhost:8000/health returns JSON
 
-## ☁️ AWS EC2 Deployment
+**API errors?**
+- Verify your Gemini API key is valid
+- Check your Google AI Studio quota
 
-### Automated Deployment
-```bash
-# On your EC2 instance
-chmod +x deploy.sh
-./deploy.sh
-```
+## 📄 License
 
-### Security Group Configuration
-Allow these ports in your EC2 Security Group:
-- **HTTP (80)**: Frontend access
-- **Custom TCP (8000)**: Backend API access
+MIT License - Feel free to use and modify!
 
-## 📊 Usage Flow
+---
 
-1. **🩺 Start Consultation**: Describe symptoms in detail
-2. **❓ Answer Questions**: Respond to AI-generated medical questions
-3. **📋 View Assessment**: Review conditions, recommendations, and warnings
-4. **📚 Check History**: Access previous consultation records
-
-## 🔌 API Reference
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/analyze_symptoms` | POST | Submit symptoms for AI analysis |
-| `/history` | GET | Retrieve consultation history |
-| `/clear-history` | DELETE | Clear all consultation data |
-| `/health` | GET | Service health check |
-
-### Request Example
-```json
-{
-  "symptoms": "I have a fever and sore throat for 2 days",
-  "conversation_history": [],
-  "is_followup": false
-}
-```
-
-## 🐳 Docker Commands
-
-```bash
-# Start services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services  
-docker-compose down
-
-# Rebuild and restart
-docker-compose up -d --build
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-```bash
-# Required
-GEMINI_API_KEY=your_gemini_api_key_here
-
-# Optional
-DB_PATH=/app/data/data.db
-API_HOST=0.0.0.0
-API_PORT=8000
-```
-
-## 🏥 Medical Disclaimer
-
-⚠️ **IMPORTANT**: This application is for educational purposes only and is not intended to replace professional medical advice, diagnosis, or treatment. Always consult qualified healthcare providers for medical concerns.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-**API Key Issues**
-```bash
-# Check environment variables
-docker-compose exec backend printenv | grep GEMINI
-```
-
-**Database Issues** 
-```bash
-# Reset database
-docker-compose down
-rm -rf ./data/
-docker-compose up -d
+**Disclaimer:** This application is for educational purposes only and should not replace professional medical advice, diagnosis, or treatment.
 
